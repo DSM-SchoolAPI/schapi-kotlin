@@ -5,6 +5,37 @@ import java.io.InputStreamReader
 import java.net.URL
 import java.util.ArrayList
 
+private val URL_FORMAT = "https://%s/sts_sci_md00_001.do?schulCode=%s&schulCrseScCode=%d&schulKndScScore=0%d&schYm=%d%02d"
+
+private fun getResponseDataFromConnection(url: URL): String {
+    val reader = BufferedReader(InputStreamReader(url.openStream()))
+
+    val buffer = StringBuilder()
+
+    var reading = false
+
+    while (true) {
+        val inputLine = reader.readLine()
+
+        if (inputLine == null) {
+            break
+        }
+
+        if (reading) {
+            if (inputLine.contains("</tbody>"))
+                break
+            buffer.append(inputLine)
+        } else {
+            if (inputLine.contains("<tbody>"))
+                reading = true
+        }
+    }
+
+    reader.close()
+
+    return buffer.toString()
+}
+
 class SchoolAPI(private val region: Region, private val schoolCode: String, private val type: Type) {
     enum class Region constructor(val value: String) {
         SEOUL("stu.sen.go.kr"),
@@ -42,38 +73,4 @@ class SchoolAPI(private val region: Region, private val schoolCode: String, priv
 
         return parser.parse(getResponseDataFromConnection(url))
     }
-
-    companion object {
-        private val URL_FORMAT = "https://%s/sts_sci_md00_001.do?schulCode=%s&schulCrseScCode=%d&schulKndScScore=0%d&schYm=%d%02d"
-
-        private fun getResponseDataFromConnection(url: URL): String {
-            val reader = BufferedReader(InputStreamReader(url.openStream()))
-
-            val buffer = StringBuilder()
-
-            var reading = false
-
-            while (true) {
-                val inputLine = reader.readLine()
-
-                if (inputLine == null) {
-                    break
-                }
-
-                if (reading) {
-                    if (inputLine.contains("</tbody>"))
-                        break
-                    buffer.append(inputLine)
-                } else {
-                    if (inputLine.contains("<tbody>"))
-                        reading = true
-                }
-            }
-
-            reader.close()
-
-            return buffer.toString()
-        }
-    }
 }
-
