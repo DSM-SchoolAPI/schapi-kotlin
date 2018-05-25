@@ -5,7 +5,7 @@ import java.io.InputStreamReader
 import java.net.URL
 import java.util.ArrayList
 
-class SchoolAPI(val region: Region, private val schoolCode: String, val type: Type) {
+class SchoolAPI(private val region: Region, private val schoolCode: String, private val type: Type) {
     enum class Region constructor(val value: String) {
         SEOUL("stu.sen.go.kr"),
         BUSAN("stu.pen.go.kr"),
