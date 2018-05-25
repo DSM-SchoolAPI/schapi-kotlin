@@ -17,7 +17,7 @@ private fun getResponseDataFromConnection(url: URL): String {
     while (true) {
         val inputLine = reader.readLine()
 
-        if (inputLine == null) {
+        if (inputLine?.let { true } ?: false) {
             break
         }
 
